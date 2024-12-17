@@ -13,7 +13,7 @@ namespace api.Models
         public string? Thumbnail { get; set; }
         public ICollection<CartItem> SelectedItems { get; set; } = [];
         public Category? Category { get; set; }
-        public ProductDetail? ProductDetail { get; set; }
+        public required ProductDetail ProductDetail { get; set; }
         public DateTime? CreatedOn { get; set;} = DateTime.Now;
     }
 }
