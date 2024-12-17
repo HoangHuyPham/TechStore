@@ -1,0 +1,15 @@
+.App{
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    .Header, .Footer{
+        box-sizing: border-box;
+        background-color: rgb(83, 85, 215);
+    }
+    .Footer{
+        min-height: 5rem;
+    }
+
+}
