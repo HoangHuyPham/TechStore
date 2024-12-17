@@ -9,13 +9,9 @@ namespace api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(IRepository<Product> repoProduct, IRepository<ProductDetail> repoProductDetail,
-    IRepository<ProductOption> repoProductOption, IRepository<Category> repoCategory, IProductService productService) : ControllerBase
+    public class ProductController(IRepository<Product> repoProduct, IProductService productService) : ControllerBase
     {
         private readonly IRepository<Product> _repoProduct = repoProduct;
-        private readonly IRepository<ProductDetail> _repoProductDetail = repoProductDetail;
-        private readonly IRepository<ProductOption> _repoProductOption = repoProductOption;
-        private readonly IRepository<Category> _repoCategory = repoCategory;
         private readonly IProductService _productService = productService;
         [HttpGet]
         public async Task<IActionResult> GetAll(){
