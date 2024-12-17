@@ -15,7 +15,6 @@ namespace api.Models
         public required string Email { get; set;}  
         public int Phone { get; set;}
         public string? Avatar { get; set;}
-        public Account? Account { get; set;}
         public Review? Review{ get; set;}
         public required Guid UserGroupId;
         public required UserGroup UserGroup{ get; set;}

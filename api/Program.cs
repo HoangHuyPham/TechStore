@@ -1,9 +1,14 @@
 namespace api;
-using Microsoft.AspNetCore.Authentication;
+
+using api.Datas;
+using api.Models;
+using api.Repos;
+using api.Repos.Interfaces;
+using api.Services;
+using api.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.OpenApi;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 class Program
 {
     static void Main(string[] args)
@@ -11,6 +16,17 @@ class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
+        builder.Services.AddDbContext<ApplicationContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+        });
+        builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+        builder.Services.AddScoped<IRepository<ProductDetail>, ProductDetailRepository>();
+        builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
+        builder.Services.AddScoped<IRepository<Preview>, PreviewRepository>();
+        builder.Services.AddScoped<IRepository<ProductOption>, ProductOptionRepository>();
+        builder.Services.AddScoped<IProductService, ProductService>();
+
 
         var app = builder.Build();
         if (app.Environment.IsDevelopment())

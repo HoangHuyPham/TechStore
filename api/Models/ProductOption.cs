@@ -8,9 +8,9 @@ namespace api.Models
     {
         [Key]
         public Guid Id { get; set; }
-        [MaxLength(256 * 2)]
+        [MaxLength(64 * 2)]
         public required string Name { get; set; }
-        public required Guid ProductDetailId { get; set; }
-        public required ProductDetail ProductDetail { get; set; }
+        public Guid? ProductDetailId { get; set; }
+        public ProductDetail? ProductDetail { get; set; }
     }
 }
