@@ -1,18 +1,31 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Badge, Button, Card, Carousel, Pagination, Rate } from 'antd';
+import { Card, Carousel, Dropdown, Input, InputNumber, MenuProps, Pagination, Space, Typography } from 'antd';
 import { Product } from '../interfaces/Product';
-import { ShoppingCartOutlined } from '@ant-design/icons';
+import ProductList from '../components/ProductList';
+import { DownOutlined } from '@ant-design/icons';
 
 const { Meta } = Card;
 
 const Home: React.FC = () => {
   const [products, setProducts] = useState<Product[]>()
-  const [loading, setLoading] = useState<boolean>(true);
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: 'Item 1',
+    },
+    {
+      key: '2',
+      label: 'Item 2',
+    },
+    {
+      key: '3',
+      label: 'Item 3',
+    },
+  ];
 
   useEffect(() => {
     fetchProducts()
-    setLoading(false)
   }, [products?.length])
 
   const fetchProducts = async () => {
@@ -22,11 +35,8 @@ const Home: React.FC = () => {
 
   return (
     <>
-
-
-      <div className='Home flex py-24 px-32 flex-wrap gap-5 justify-center'>
-
-        <div className="min-w-[1024px] px-32">
+      <div className='Home flex flex-col items-center py-24 gap-5'>
+        <div className="min-w-[1024px] max-w-[1024px]">
           <Carousel autoplay>
             <div className='flex justify-center'>
               <img className='mx-auto' src='https://d1csarkz8obe9u.cloudfront.net/posterpreviews/smart-phone-banner-design-template-caa98978d25e965873a22b01acb99ba7_screen.jpg' />
@@ -37,35 +47,67 @@ const Home: React.FC = () => {
           </Carousel>
         </div>
 
-        {
-          products?.map((v, i) => (
-            <Badge.Ribbon text="News">
-              <Card
-                key={i}
-                hoverable
-                loading={loading}
-                className='w-[240px]'
-                cover={<img lazy-loading alt={v?.name} src={v?.thumbnail} />}
-              >
-                <Meta title={v?.name} />
-                <div className="Price flex gap-2">
-                  <div className="BeforePrice text-red-600 text-2xl">{v?.productDetail_beforePrice}đ</div>
-                  <div className="AfterPrice line-through">{v?.productDetail_beforePrice}đ</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <Rate disabled defaultValue={v?.productDetail_totalRating} />
-                  <Button><ShoppingCartOutlined /></Button>
-                </div>
+        <div className="FilterWrapper flex gap-5 items-center">
+          <div className="SearchWrapper w-[240px]">
+            <Input.Search size="small" placeholder="search here" />
+          </div>
 
-              </Card>
-            </Badge.Ribbon>
-          ))
-        }
+
+          <Dropdown
+            menu={{
+              items,
+              selectable: true,
+              defaultSelectedKeys: ['3'],
+            }}
+          >
+            <Typography.Link>
+              <Space>
+                Category
+                <DownOutlined />
+              </Space>
+            </Typography.Link>
+          </Dropdown>
+
+          <Dropdown
+            menu={{
+              items,
+              selectable: true,
+              defaultSelectedKeys: ['3'],
+            }}
+          >
+            <Typography.Link>
+              <Space>
+                Brand
+                <DownOutlined />
+              </Space>
+            </Typography.Link>
+          </Dropdown>
+
+          <div className="PriceFilterWrapper flex text-black items-center">
+            <InputNumber
+              placeholder="min"
+              value={0}
+              style={{ margin: '0 16px', width: '120px' }}
+            />
+            -
+            <InputNumber
+              placeholder="max"
+              value={999999999}
+              style={{ margin: '0 16px', width: '120px'}}
+            />
+          </div>
+
+        </div>
+
+
+
+        <ProductList products={products} />
+        <div className="flex justify-center">
+          <Pagination simple defaultCurrent={2} total={products?.length} />
+        </div>
       </div>
 
-      <div className="flex justify-center mb-5">
-        <Pagination simple defaultCurrent={2} total={products?.length} />
-      </div>
+
     </>
   )
 }

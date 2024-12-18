@@ -11,5 +11,11 @@
     .Footer{
         min-height: 5rem;
     }
-
+    .Home{
+        .ProductList{
+            .ProductItemWrapper{
+                flex: 1 1 200px;
+            }
+        }
+    }
 }
