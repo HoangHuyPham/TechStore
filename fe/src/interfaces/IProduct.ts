@@ -1,4 +1,4 @@
-interface Product {
+interface IProduct {
     id: string,
     name:string,
     thumbnail: string,
@@ -10,4 +10,4 @@ interface Product {
     productDetail_totalRating: number
 }
 
-export type {Product}
+export type {IProduct}

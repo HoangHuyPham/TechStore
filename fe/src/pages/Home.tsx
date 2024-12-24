@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Carousel, Dropdown, Input, InputNumber, MenuProps, Pagination, Space, Typography } from 'antd';
-import { Product } from '../interfaces/Product';
+import { IProduct } from '../interfaces/IProduct';
 import ProductList from '../components/ProductList';
 import { DownOutlined } from '@ant-design/icons';
 
 const Home: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>()
+  const [products, setProducts] = useState<IProduct[]>()
   const items: MenuProps['items'] = [
     {
       key: '1',
