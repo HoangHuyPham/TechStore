@@ -1,7 +1,7 @@
 const Footer:React.FC = () =>{
   return (
     <>
-      <footer className="Footer p-5 mt-5">
+      <footer className="Footer p-5">
         <p className="text-2xl font-bold">
           About Us
         </p>

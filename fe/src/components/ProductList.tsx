@@ -1,10 +1,10 @@
 import { Spin } from "antd";
-import { IProduct } from "../interfaces/IProduct"
+import { IProductItem } from "../interfaces"
 import ProductItem from "./ProductItem";
 import { LoadingOutlined } from "@ant-design/icons";
 
 type ProductListProps = {
-    products: IProduct[] | undefined;
+    products: IProductItem[] | undefined;
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {

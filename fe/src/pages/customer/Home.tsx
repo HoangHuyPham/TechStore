@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Carousel, Dropdown, Input, InputNumber, MenuProps, Pagination, Space, Typography } from 'antd';
-import { IProduct } from '../interfaces/IProduct';
-import ProductList from '../components/ProductList';
+import { IProductItem } from '../interfaces/IProductItem';
+import ProductList from '../../components/ProductList';
 import { DownOutlined } from '@ant-design/icons';
 
 const Home: React.FC = () => {
-  const [products, setProducts] = useState<IProduct[]>()
+  const [products, setProducts] = useState<IProductItem[]>()
   const items: MenuProps['items'] = [
     {
       key: '1',
@@ -33,7 +33,7 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <div className='Home flex flex-col items-center py-24 gap-5'>
+      <div className='Home flex flex-col items-center py-5 gap-5'>
         <div className="min-w-[1024px] max-w-[1024px]">
           <Carousel autoplay>
             <div className='flex justify-center'>

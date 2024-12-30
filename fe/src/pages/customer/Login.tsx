@@ -1,11 +1,11 @@
-import { Checkbox, Divider, Form, FormProps, Input } from 'antd';
+import { Button, Checkbox, Divider, Form, FormProps, Input } from 'antd';
 import { Link } from 'react-router-dom';
 
-const Signup: React.FC = () => {
+const Login: React.FC = () => {
+  
   type FieldType = {
     username?: string;
     password?: string;
-    confirmPassword?: string;
     remember?: string;
   };
 
@@ -19,11 +19,11 @@ const Signup: React.FC = () => {
 
   return (
     <>
-      <div className='Signup flex flex-col items-center py-24 gap-5'>
-        <div className="SignupContainer rounded bg-white flex">
-          <p className='flex text-white text-center text-3xl bg-orange-500 px-5 py-2'>Signup</p>
+      <div className='Login flex flex-col items-center p-5 gap-5 animate-fade'>
+        <div className="LoginContainer rounded bg-white flex">
+          <p className='flex text-white text-center text-3xl bg-blue-500 px-5 py-2'>Login</p>
           <Form
-            className="px-12 py-2"
+            className="px-10 py-2"
             name="basic"
             style={{ maxWidth: 600 }}
             initialValues={{ remember: false }}
@@ -45,26 +45,18 @@ const Signup: React.FC = () => {
               name="password"
               rules={[{ required: true, message: 'Please input your password!' }]}
             >
-              <Input.Password visibilityToggle = {false}/>
-            </Form.Item>
-
-            <Form.Item<FieldType>
-              label="Confirm password"
-              name="confirmPassword"
-              rules={[{ required: true, message: 'Please input your password!' }]}
-            >
-              <Input.Password visibilityToggle = {false} />
+              <Input.Password />
             </Form.Item>
 
             <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}>
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
             <div className="flex flex-col justify-center items-center">
-              <button className="bg-orange-400 text-white hover:bg-red-200 rounded-md px-3 py-1">
-                Signup
-              </button>
-              <Divider style={{ borderColor: '#000000' }} variant="solid" plain>Have account ?</Divider>
-              <Link className='text-orange-700' to={"/login"}>Login</Link>
+              <Button type="primary" htmlType="submit">
+                Login
+              </Button>
+              <Divider style={{ borderColor: '#000000' }} variant="solid" plain>No have account ?</Divider>
+              <Link className='text-orange-700' to={"/signup"}>Sign up</Link>
             </div>
           </Form>
         </div>
@@ -73,4 +65,4 @@ const Signup: React.FC = () => {
   )
 }
 
-export default Signup
+export default Login

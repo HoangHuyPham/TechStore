@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 const Header:React.FC = ()=>{
   return (
     <>
-      <header className="Header flex fixed z-50 w-[100%] justify-between py-2 px-5">
+      <header className="Header bg-[#3b82f6] flex sticky top-0 z-50 w-[100%] justify-between py-2 px-5">
         <Link to={"/home"}><img src={logo} /></Link>
         <section className='flex gap-2'>
-          <Button type="primary"><ShoppingCartOutlined /></Button>
+          <Link to={"/cart"}><Button type="primary"><ShoppingCartOutlined /></Button></Link>
           <Link to={"/login"}><Button to={"/login"} type="primary" danger icon={<UserOutlined />}>Login</Button></Link>
         </section>
       </header>
