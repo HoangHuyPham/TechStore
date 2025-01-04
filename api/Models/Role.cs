@@ -7,9 +7,8 @@ namespace api.Models
     public class Role
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         [MaxLength(256 * 2)]
-        public required string URL { get; set; }
-        public ICollection<UserGroup> UserGroups {get;} = [];
+        public string? Name { get; set; }
     }
 }

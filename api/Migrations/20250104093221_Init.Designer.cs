@@ -12,7 +12,7 @@ using api.Datas;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241217071608_Init")]
+    [Migration("20250104093221_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -24,21 +24,6 @@ namespace api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("RoleUserGroup", b =>
-                {
-                    b.Property<Guid>("RolesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserGroupsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("RolesId", "UserGroupsId");
-
-                    b.HasIndex("UserGroupsId");
-
-                    b.ToTable("RoleUserGroup");
-                });
 
             modelBuilder.Entity("api.Models.Cart", b =>
                 {
@@ -296,14 +281,25 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("URL")
-                        .IsRequired()
+                    b.Property<string>("Name")
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c26b7fcb-9e16-47aa-893e-3ef148de9714"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("f80eee5a-eefe-49c6-9a11-2e5b3804a71c"),
+                            Name = "Customer"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.User", b =>
@@ -313,7 +309,6 @@ namespace api.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
@@ -324,7 +319,6 @@ namespace api.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
@@ -333,33 +327,31 @@ namespace api.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<int>("Phone")
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Phone")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserGroupId1")
+                    b.Property<Guid?>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserGroupId1");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
-                });
 
-            modelBuilder.Entity("api.Models.UserGroup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserGroups");
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e9b120bf-5e4b-453e-8c8a-423b8872ece3"),
+                            Email = "admin@gmail.com",
+                            Name = "Admin",
+                            Password = "$2a$11$3DnMnL3JrizdEtWpgg5ut.rp0jkJrUSlRyLbYBZpA94DYfSYFkJLa",
+                            RoleId = new Guid("c26b7fcb-9e16-47aa-893e-3ef148de9714")
+                        });
                 });
 
             modelBuilder.Entity("api.Models.Voucher", b =>
@@ -388,21 +380,6 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vouchers");
-                });
-
-            modelBuilder.Entity("RoleUserGroup", b =>
-                {
-                    b.HasOne("api.Models.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.Models.UserGroup", null)
-                        .WithMany()
-                        .HasForeignKey("UserGroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("api.Models.Cart", b =>
@@ -526,13 +503,11 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.User", b =>
                 {
-                    b.HasOne("api.Models.UserGroup", "UserGroup")
-                        .WithMany("Users")
-                        .HasForeignKey("UserGroupId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("api.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
 
-                    b.Navigation("UserGroup");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("api.Models.Cart", b =>
@@ -577,11 +552,6 @@ namespace api.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Review");
-                });
-
-            modelBuilder.Entity("api.Models.UserGroup", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("api.Models.Voucher", b =>

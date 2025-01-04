@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace api.Migrations
 {
     /// <inheritdoc />
@@ -40,23 +42,11 @@ namespace api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    URL = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserGroups",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserGroups", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,51 +86,27 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoleUserGroup",
-                columns: table => new
-                {
-                    RolesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserGroupsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RoleUserGroup", x => new { x.RolesId, x.UserGroupsId });
-                    table.ForeignKey(
-                        name: "FK_RoleUserGroup_Roles_RolesId",
-                        column: x => x.RolesId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RoleUserGroup_UserGroups_UserGroupsId",
-                        column: x => x.UserGroupsId,
-                        principalTable: "UserGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
-                    Phone = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    Phone = table.Column<int>(type: "int", nullable: true),
                     Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserGroupId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_UserGroups_UserGroupId1",
-                        column: x => x.UserGroupId1,
-                        principalTable: "UserGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -316,6 +282,20 @@ namespace api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("c26b7fcb-9e16-47aa-893e-3ef148de9714"), "Admin" },
+                    { new Guid("f80eee5a-eefe-49c6-9a11-2e5b3804a71c"), "Customer" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Address", "Avatar", "CreatedOn", "Email", "Name", "Password", "Phone", "RoleId" },
+                values: new object[] { new Guid("e9b120bf-5e4b-453e-8c8a-423b8872ece3"), null, null, null, "admin@gmail.com", "Admin", "$2a$11$3DnMnL3JrizdEtWpgg5ut.rp0jkJrUSlRyLbYBZpA94DYfSYFkJLa", null, new Guid("c26b7fcb-9e16-47aa-893e-3ef148de9714") });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CartId",
                 table: "CartItems",
@@ -387,14 +367,9 @@ namespace api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleUserGroup_UserGroupsId",
-                table: "RoleUserGroup",
-                column: "UserGroupsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_UserGroupId1",
+                name: "IX_Users_RoleId",
                 table: "Users",
-                column: "UserGroupId1");
+                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -413,9 +388,6 @@ namespace api.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "RoleUserGroup");
-
-            migrationBuilder.DropTable(
                 name: "Carts");
 
             migrationBuilder.DropTable(
@@ -423,9 +395,6 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductDetails");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "OrderTypes");
@@ -440,7 +409,7 @@ namespace api.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "UserGroups");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Categories");
