@@ -38,11 +38,9 @@ namespace api.Repos
 
         public async Task<Role?> Update(Guid id, Role data)
         {
-            var existRole = await _context.Roles.FirstOrDefaultAsync(x => x.Id == id);
-            if (existRole == null) return null;
-            existRole.Name = data.Name;
+             _context.Roles.Update(data);
             await _context.SaveChangesAsync();
-            return existRole;
+            return data;
         }
     }
 }

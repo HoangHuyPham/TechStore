@@ -6,5 +6,6 @@ namespace api.DTOs.ProductOption
     {
         [StringLength(64)]
         public required string Name { get; set; }
+        public bool IsSelected { get; set; } = false;
     }
 }

@@ -7,7 +7,7 @@ namespace api.Mappers
     {
         public static Preview ParseToPreview(this PreviewCreateDTO createDTO){
             return new Preview{
-                URL = createDTO.URL,
+                // URL = createDTO.URL,
             };
         }
     }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace api.Models
 {
@@ -15,6 +16,7 @@ namespace api.Models
         public float Price { get; set; }
         public float TotalRating { get; set; }
         public Guid? ProductId { get; set; }
+        [JsonIgnore]
         public Product? Product { get; set; }
         public ICollection<Preview>? Previews { get; set; }
         public ICollection<ProductOption>? ProductOptions { get; set; }

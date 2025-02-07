@@ -38,11 +38,9 @@ namespace api.Repos
 
         public async Task<Category?> Update(Guid id, Category data)
         {
-            var existCategory = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
-            if (existCategory == null) return null;
-            existCategory.Name = data.Name;
+            _context.Categories.Update(data);
             await _context.SaveChangesAsync();
-            return existCategory;
+            return data;
         }
     }
 }

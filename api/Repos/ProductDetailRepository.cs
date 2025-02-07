@@ -31,22 +31,16 @@ namespace api.Repos
 
         public async Task<ProductDetail?> FindById(Guid id)
         {
-            var existProductDetail = await _context.ProductDetails.FirstOrDefaultAsync(x => x.Id == id);
+            var existProductDetail = await _context.ProductDetails.Include(x=>x.ProductOptions).Include(x=>x.Previews).FirstOrDefaultAsync(x => x.Id == id);
             if (existProductDetail == null) return null;
             return existProductDetail;
         }
 
         public async Task<ProductDetail?> Update(Guid id, ProductDetail data)
         {
-            var existProductDetail = await _context.ProductDetails.FirstOrDefaultAsync(x => x.Id == id);
-            if (existProductDetail == null) return null;
-            existProductDetail.Description = data.Description;
-            existProductDetail.BeforePrice = data.BeforePrice;
-            existProductDetail.Price = data.Price;
-            existProductDetail.Stock = data.Stock;
-            existProductDetail.TotalRating = data.TotalRating;
+             _context.ProductDetails.Update(data);
             await _context.SaveChangesAsync();
-            return existProductDetail;
+            return data;
         }
     }
 }

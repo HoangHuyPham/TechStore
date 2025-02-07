@@ -9,11 +9,11 @@ namespace api.Models
         [Key]
         public Guid Id { get; set; }
         [MaxLength(256 * 2)]
-        public required string Name { get; set; }
-        public required bool IsActive { get; set; }
-        public required DateTime ExpiredAt { get; set; }
-        public required float Factor { get; set; }
-        public Order? Order{ get; set; }
+        public string? Name { get; set; }
+        public Guid? Code { get; set; }
+        public bool? IsActive { get; set; }
+        public DateTime? ExpiredAt { get; set; }
+        public float? Factor { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

@@ -26,38 +26,28 @@ namespace api.Repos
 
         public async Task<List<User>> FindAll()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Include(x => x.Role).Include(x=>x.Avatar).ToListAsync();
         }
 
         public async Task<User?> FindById(Guid id)
         {
-            var existUser = await _context.Users.Include(x=>x.Role).FirstOrDefaultAsync(x => x.Id == id);
+            var existUser = await _context.Users.Include(x => x.Role).Include(x=>x.Avatar).FirstOrDefaultAsync(x => x.Id == id);
             if (existUser == null) return null;
             return existUser;
         }
 
         public async Task<User?> FindByEmail(string email)
         {
-            var existUser = await _context.Users.Include(x=>x.Role).FirstOrDefaultAsync(x => x.Email == email);
+            var existUser = await _context.Users.Include(x => x.Role).Include(x=>x.Cart).FirstOrDefaultAsync(x => x.Email == email);
             if (existUser == null) return null;
             return existUser;
         }
 
         public async Task<User?> Update(Guid id, User data)
         {
-            var existUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
-            if (existUser == null) return null;
-            existUser.Name = data.Name;
-            existUser.Address = data.Address;
-            existUser.Email = data.Email;
-            existUser.Phone = data.Phone;
-            existUser.Password = data.Name;
-            existUser.Avatar = data.Avatar;
-            existUser.Role = data.Role;
+             _context.Users.Update(data);
             await _context.SaveChangesAsync();
-            return existUser;
+            return data;
         }
-
-        
     }
 }

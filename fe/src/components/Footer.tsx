@@ -16,7 +16,7 @@ const Footer:React.FC = () =>{
         </p>
       
         <p className="text-center">
-          © 2024 [Store Name]. All Rights Reserved.
+          © 2024 [Tech Store]. All Rights Reserved.
         </p>
       </footer>
     </>

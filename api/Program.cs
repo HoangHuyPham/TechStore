@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -19,6 +20,14 @@ class Program
     static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "AppPolicy", policy =>
+            {
+                policy.WithOrigins("http://localhost:5173").AllowAnyHeader()
+                                                  .AllowAnyMethod();
+            });
+        });
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
             options =>
             {
@@ -38,6 +47,7 @@ class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
+            options.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
@@ -72,15 +82,23 @@ class Program
         {
             options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
         });
-        builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
         builder.Services.AddScoped<IRepository<ProductDetail>, ProductDetailRepository>();
         builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
         builder.Services.AddScoped<IRepository<Preview>, PreviewRepository>();
         builder.Services.AddScoped<IRepository<ProductOption>, ProductOptionRepository>();
         builder.Services.AddScoped<IRepository<Role>, RoleRepository>();
+        builder.Services.AddScoped<IRepository<Cart>, CartRepository>();
+        builder.Services.AddScoped<IRepository<CartItem>, CartItemRepository>();
+        builder.Services.AddScoped<IRepository<Image>, ImageRepository>();
+        builder.Services.AddScoped<IRepository<OrderType>, OrderTypeRepository>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IImageService, ImageService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
 
 
         var app = builder.Build();
@@ -93,7 +111,13 @@ class Program
                 options.RoutePrefix = string.Empty;
             });
         }
-
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                   Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+            RequestPath = "/static"
+        });
+        app.UseCors("AppPolicy");
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();

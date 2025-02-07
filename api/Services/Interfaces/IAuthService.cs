@@ -7,7 +7,8 @@ namespace api.Services.Interfaces
     {
         Task<User?> Login(LoginDTO loginDTO);
         Task<User?> Register(RegisterDTO registerDTO);
-        Task<bool> UserAvailable(string email);
+        Task<bool> UserAvailable(CheckEmailDTO checkEmailDTO);
+        Task<bool> ChangePassword(Guid userId, ChangePasswordDTO changePasswordDTO);
         string? generateToken(User user);
     }
 }

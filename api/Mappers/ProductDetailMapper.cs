@@ -17,12 +17,12 @@ namespace api.Mappers
                 Price = product.Price,
                 Stock = product.Stock,
                 TotalRating = product.TotalRating,
-                Previews = product?.Previews?.Select(x => new PreviewDTO
-                {
-                    Id = x.Id,
-                    URL = x.URL,
-                    ProductDetailId = x.ProductDetailId,
-                }).ToList(),
+                // Previews = product?.Previews?.Select(x => new PreviewDTO
+                // {
+                //     Id = x.Id,
+                //     // URL = x.URL,
+                //     ProductDetailId = x.ProductDetailId,
+                // }).ToList(),
                 ProductOptions = product?.ProductOptions?.Select(x => new ProductOptionDTO
                 {
                     Id = x.Id,
@@ -45,7 +45,7 @@ namespace api.Mappers
                 Previews = productDetailDTO?.Previews?.Select(x => new Preview
                 {
                     Id = x.Id,
-                    URL = x.URL,
+                    // URL = x.URL,
                     ProductDetailId = x.ProductDetailId,
                 }).ToList(),
                 ProductOptions = productDetailDTO?.ProductOptions?.Select(x => new ProductOption
@@ -67,7 +67,7 @@ namespace api.Mappers
                 Price = createDTO.Price,
                 Stock = createDTO.Stock,
                 TotalRating = createDTO.TotalRating,
-                Previews = createDTO?.Previews?.Select(x => x.ParseToPreview()).ToList(),
+                // Previews = createDTO?.Previews?.Select(x => x.ParseToPreview()).ToList(),
                 ProductOptions = createDTO?.ProductOptions?.Select(x => x.ParseToProductOption()).ToList(),
             };
         }

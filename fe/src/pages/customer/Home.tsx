@@ -1,35 +1,128 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { Carousel, Dropdown, Input, InputNumber, MenuProps, Pagination, Space, Typography } from 'antd';
-import { IProductItem } from '../interfaces/IProductItem';
 import ProductList from '../../components/ProductList';
 import { DownOutlined } from '@ant-design/icons';
+import { Endpoint, get } from '../../request/AppRequest';
+import { IProductItem, IUser } from '../../interfaces';
+import { useDebounce } from '../../custom/hooks';
+import { useUserContext } from '../../contexts/hooks';
+import { toast } from 'react-toastify';
+import { USER_ACTION } from '../../contexts/UserContext';
 
 const Home: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalItems, setTotalItems] = useState(0)
+
   const [products, setProducts] = useState<IProductItem[]>()
-  const items: MenuProps['items'] = [
-    {
-      key: '1',
-      label: 'Item 1',
-    },
-    {
-      key: '2',
-      label: 'Item 2',
-    },
-    {
-      key: '3',
-      label: 'Item 3',
-    },
-  ];
+  const [categoryId, setCategoryId] = useState<string>("3381e3d3-1599-4c73-885f-e8cda0c4ca99")
+  const [categoryMenus, setCategoryMenus] = useState<MenuProps['items']>([])
+  const [loading, setLoading] = useState(false)
+
+  const [minPrice, setMinPrice] = useState(0)
+  const [maxPrice, setMaxPrice] = useState(1_000_000_000)
+
+  const { dispatchUser } = useUserContext()
+
+  const [keyword, setKeyword] = useState(undefined);
+  const keywordDebounced = useDebounce(keyword, 1000);
 
   useEffect(() => {
-    fetchProducts()
-  }, [products?.length])
+    try {
+      setLoading(true)
+      fetchProducts()
+    } catch (error) {
+      console.warn(error)
+    } finally {
+      setTimeout(() => {
+        setLoading(false)
+      }, 100);
+    }
+  }, [products?.length, pageSize, currentPage, categoryId, keywordDebounced, minPrice, maxPrice])
+
+  useEffect(() => {
+    fetchUser()
+    fetchCategories()
+  }, [])
+
+  const fetchUser = async () => {
+    try {
+        const { status, data } = await get({
+            url: Endpoint.PROFILE_URL
+        })
+
+        if (status === 200) {
+            dispatchUser({
+                type: USER_ACTION.ADD,
+                payload: data as IUser
+            })
+        } else {
+            toast.error(`Error: ${data}`)
+        }
+    } catch (error) {
+        console.error(`Error: ${error}`)
+    }
+}
+
+  const fetchCategories = async () => {
+    const { status, data } = await get({
+      url: Endpoint.CATEGORY_URL
+    })
+    const categoryMenus: MenuProps['items'] = [{
+      key: '3381e3d3-1599-4c73-885f-e8cda0c4ca99',
+      label: 'No filter'
+    }]
+    if (status === 200)
+      data.map(c => {
+        categoryMenus?.push({
+          key: c.id,
+          label: c.name
+        })
+      })
+    setCategoryMenus(categoryMenus)
+  }
 
   const fetchProducts = async () => {
-    const { data } = await axios.get("https://67160f3933bc2bfe40bc344a.mockapi.io/api/v1/products")
-    setProducts(data)
+    let params
+
+    if (categoryId === "3381e3d3-1599-4c73-885f-e8cda0c4ca99")
+      params = {
+        MinPrice: minPrice,
+        MaxPrice: maxPrice,
+        Page: currentPage,
+        PageSize: pageSize,
+        KeyWord: keywordDebounced
+      }
+    else
+      params = {
+        CategoryId: categoryId,
+        MinPrice: minPrice,
+        MaxPrice: maxPrice,
+        Page: currentPage,
+        PageSize: pageSize,
+        KeyWord: keywordDebounced
+      }
+    try {
+      const { data, status } = await get({
+        url: Endpoint.PRODUCT_URL,
+        params: params
+      })
+      setTotalItems(data.totalItems)
+      setProducts(data.items)
+    } catch (error) {
+      setTotalItems(0)
+      setProducts([])
+    }
   }
+
+  const handlePagination = (page: number, pageSize: number) => {
+    setPageSize(pageSize)
+    setCurrentPage(page)
+  }
+
+  const hanldeChangeCategory: MenuProps['onClick'] = ({ key }) => {
+    setCategoryId(key)
+  };
 
   return (
     <>
@@ -37,25 +130,26 @@ const Home: React.FC = () => {
         <div className="min-w-[1024px] max-w-[1024px]">
           <Carousel autoplay>
             <div className='flex justify-center'>
-              <img className='mx-auto' src='https://d1csarkz8obe9u.cloudfront.net/posterpreviews/smart-phone-banner-design-template-caa98978d25e965873a22b01acb99ba7_screen.jpg' />
+              <img lazy-loading={true} className='mx-auto' src='https://d1csarkz8obe9u.cloudfront.net/posterpreviews/smart-phone-banner-design-template-caa98978d25e965873a22b01acb99ba7_screen.jpg' />
             </div>
             <div className='flex justify-center'>
-              <img className='mx-auto' src='https://d1csarkz8obe9u.cloudfront.net/posterpreviews/smart-phone-banner-design-template-caa98978d25e965873a22b01acb99ba7_screen.jpg' />
+              <img lazy-loading={true} className='mx-auto' src='https://d1csarkz8obe9u.cloudfront.net/posterpreviews/smart-phone-banner-design-template-caa98978d25e965873a22b01acb99ba7_screen.jpg' />
             </div>
           </Carousel>
         </div>
 
         <div className="FilterWrapper flex gap-5 items-center">
           <div className="SearchWrapper w-[240px]">
-            <Input.Search size="small" placeholder="search here" />
+            <Input onChange={(e) => setKeyword(e.target.value)} size="small" placeholder="search here" />
           </div>
 
 
           <Dropdown
             menu={{
-              items,
+              onClick: hanldeChangeCategory,
+              items: categoryMenus,
               selectable: true,
-              defaultSelectedKeys: ['3'],
+              defaultSelectedKeys: ['3381e3d3-1599-4c73-885f-e8cda0c4ca99']
             }}
           >
             <Typography.Link>
@@ -66,42 +160,35 @@ const Home: React.FC = () => {
             </Typography.Link>
           </Dropdown>
 
-          <Dropdown
-            menu={{
-              items,
-              selectable: true,
-              defaultSelectedKeys: ['3'],
-            }}
-          >
-            <Typography.Link>
-              <Space>
-                Brand
-                <DownOutlined />
-              </Space>
-            </Typography.Link>
-          </Dropdown>
-
           <div className="PriceFilterWrapper flex text-black items-center">
             <InputNumber
               placeholder="min"
-              value={0}
+              onChange={v => setMinPrice(v)}
+              value={minPrice}
+              min={0}
+              max={1_000_000_000}
               style={{ margin: '0 16px', width: '120px' }}
             />
             -
             <InputNumber
               placeholder="max"
-              value={999999999}
-              style={{ margin: '0 16px', width: '120px'}}
+              onChange={v => setMaxPrice(v)}
+              value={maxPrice}
+              min={0}
+              max={1_000_000_000}
+              style={{ margin: '0 16px', width: '120px' }}
             />
           </div>
-
         </div>
 
+        {
+          products != null && products?.length > 0 && (<ProductList loading={loading} products={products} />) || (
+            <h1 className='text-black'>No available items :(</h1>
+          )
+        }
 
-
-        <ProductList products={products} />
         <div className="flex justify-center">
-          <Pagination simple defaultCurrent={2} total={products?.length} />
+          <Pagination simple defaultCurrent={1} total={totalItems} showSizeChanger onChange={handlePagination} />
         </div>
       </div>
 

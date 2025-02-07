@@ -38,11 +38,9 @@ namespace api.Repos
 
         public async Task<ProductOption?> Update(Guid id, ProductOption data)
         {
-            var existProductOption = await _context.ProductOptions.FirstOrDefaultAsync(x => x.Id == id);
-            if (existProductOption == null) return null;
-            existProductOption.Name = data.Name;
+             _context.ProductOptions.Update(data);
             await _context.SaveChangesAsync();
-            return existProductOption;
+            return data;
         }
     }
 }

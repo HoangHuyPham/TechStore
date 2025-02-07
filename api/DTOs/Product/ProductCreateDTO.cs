@@ -6,8 +6,7 @@ namespace api.DTOs.Product
     {
         [StringLength(256)]
         public required string Name { get; set; }
-        [Url]
-        public string? Thumbnail { get; set; }
+        public Guid? ThumbnailId { get; set; }
         public Guid CategoryId { get; set; }
         public required ProductDetailCreateDTO ProductDetail { get; set; }
     }

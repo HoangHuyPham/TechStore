@@ -25,7 +25,7 @@ const items: MenuItem[] = [
                 label: 'Order',
                 icon: <OrderedListOutlined />,
                 children: [
-                    { key: '3', label: 'General' },
+                    { key: 'order-general', label: 'General' },
                 ],
             },
             {
@@ -33,7 +33,7 @@ const items: MenuItem[] = [
                 label: 'Product',
                 icon: <ProductOutlined />,
                 children: [
-                    { key: '4', label: 'General' },
+                    { key: 'product-general', label: 'General' },
                 ],
             },
             {
@@ -41,7 +41,7 @@ const items: MenuItem[] = [
                 label: 'Voucher',
                 icon: <NumberOutlined />,
                 children: [
-                    { key: '5', label: 'General' },
+                    { key: 'voucher-general', label: 'General' },
                 ],
             },
         ],

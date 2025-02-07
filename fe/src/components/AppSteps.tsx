@@ -18,7 +18,7 @@ const AppSteps: React.FC<AppStepProps> = ( {currentStep} ) => {
                         title: 'Checkout',
                     },
                     {
-                        title: 'Payment',
+                        title: 'Oder',
                     },
                 ]}
             />

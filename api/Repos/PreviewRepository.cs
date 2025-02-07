@@ -38,11 +38,9 @@ namespace api.Repos
 
         public async Task<Preview?> Update(Guid id, Preview data)
         {
-            var existPreview = await _context.Previews.FirstOrDefaultAsync(x => x.Id == id);
-            if (existPreview == null) return null;
-            existPreview.URL = data.URL;
+             _context.Previews.Update(data);
             await _context.SaveChangesAsync();
-            return existPreview;
+            return data;
         }
     }
 }

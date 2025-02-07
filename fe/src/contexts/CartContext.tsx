@@ -14,44 +14,16 @@ interface Action {
 const CART_ACTION = {
     ADD: "add",
     DELETE: "delete",
-    UPDATE: "update"
+    UPDATE: "update",
+    INIT: "init"
 }
 
 const CartContext = createContext<CartType>({} as CartType)
 
-const initData = ()=>{
-    return [
-        {
-            id: "1",
-            category: "Dien thoai",
-            beforePrice: 10000,
-            price: 8000,
-            name: "Xiaomi redmi note 10",
-            stock: 10,
-            quantity: 2,
-            isChecked: false,
-            thumbnail: "https://viostore.vn/wp-content/uploads/2024/01/21.png",
-            option: "red"
-        },
-        {
-            id: "2",
-            category: "Dien thoai",
-            beforePrice: 10000,
-            price: 8000,
-            name: "Xiaomi redmi note 11",
-            stock: 12,
-            quantity: 5,
-            isChecked: false,
-            thumbnail: "https://viostore.vn/wp-content/uploads/2024/01/21.png",
-            option: "blue"
-        }
-    ] as ICartItem[]
-}
-
 const CartReducer: Reducer<ICartItem[], Action> = (state, action) => {
-    switch (action.type) {
-        case CART_ACTION.ADD:
-            return [...state, action.payload as ICartItem]
+    switch (action?.type) {
+        case CART_ACTION.INIT:
+            return action.payload as ICartItem[]
         case CART_ACTION.UPDATE:
             return state.map((v)=>{
                 const cartItem = action.payload as ICartItem
@@ -68,9 +40,8 @@ const CartReducer: Reducer<ICartItem[], Action> = (state, action) => {
     }
 }
 
-
 const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [cartItems, dispatchCartItems] = useReducer(CartReducer, [], initData)
+    const [cartItems, dispatchCartItems] = useReducer(CartReducer, [])
 
     return (
         <CartContext.Provider value={{ cartItems, dispatchCartItems } as CartType}>
